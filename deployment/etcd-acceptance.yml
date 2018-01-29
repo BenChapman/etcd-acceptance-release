@@ -9,8 +9,6 @@ stemcells:
 releases:
 - name: etcd-acceptance
   version: latest
-- name: kubo-etcd
-  version: latest
 - name: bosh-dns
   version: latest
 
@@ -38,14 +36,10 @@ instance_groups:
   stemcell: default
   networks: [{name: default}]
   jobs:
-  - name: etcd-bosh-dns-aliases
-    release: kubo-etcd
-    consumes:
-      etcd: {from: etcd_server, deployment: ((etcd-deployment-name))}
   - name: read-availability-during-recreate
     release: etcd-acceptance
     consumes:
-      etcd: {from: etcd_server, deployment: ((etcd-deployment-name))}
+      etcd: {from: etcd_client, deployment: etcd}
       turbulence: {from: api, deployment: turbulence}
     properties:
       deployment_name: ((etcd-deployment-name))
@@ -56,7 +50,7 @@ instance_groups:
   - name: read-availability-during-network-partition
     release: etcd-acceptance
     consumes:
-      etcd: {from: etcd_server, deployment: ((etcd-deployment-name))}
+      etcd: {from: etcd_client, deployment: etcd}
       turbulence: {from: api, deployment: turbulence}
     properties:
       deployment_name: ((etcd-deployment-name))
@@ -67,7 +61,7 @@ instance_groups:
   - name: read-availability-during-total-network-partition
     release: etcd-acceptance
     consumes:
-      etcd: {from: etcd_server, deployment: ((etcd-deployment-name))}
+      etcd: {from: etcd_client, deployment: etcd}
       turbulence: {from: api, deployment: turbulence}
     properties:
       deployment_name: ((etcd-deployment-name))
